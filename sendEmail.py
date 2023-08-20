@@ -79,9 +79,38 @@ while (isWorking == True):
             message["Subject"] = subject
             message.set_content(body)
 
-            context = ssl.create_default_context()
+            context = ssl.create_default_context() #gives us a context for a secure connection that we can use when using the smtp library and connecting to the Gmail Server
 
             with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver, message.as_string())
         print("Success!")
+
+    elif (value == 2):
+        name = input("Enter the client's name: ")
+        address = input("Enter the client's email address: ")
+
+        mycursor.execute("INSERT INTO EmailRecords (name, email) VALUES(%s, %s)", (name, address))
+        db.commit()
+        print("Successfully Added!")
+
+    elif (value == 3):
+        address = input("Enter the client's email address: ")
+
+        mycursor.execute("DELETE FROM EmailRecords WHERE email = %s", (address,))
+        db.commit()
+        print("Successfully Removed!")
+
+    elif (value == 4):
+        mycursor.execute("SELECT * FROM EmailRecords")
+        result = mycursor.fetchall()
+        for row in result:
+            print(f"Name: {row[0]}, Email: {row[1]}")
+
+    elif (value == 5):
+        print("Have a nice day!")
+        isWorking = False
+
+    else:
+        print("Invalid Option. Please try again.")
+
